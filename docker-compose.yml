@@ -1,11 +1,12 @@
 version: '3.8'
 
 services:
-  llm-server:
+  # CPU Server (Lightweight, for local development on Mac / standard CPU hosts)
+  llm-server-cpu:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: gemma-llm-server
+    container_name: gemma-llm-server-cpu
     ports:
       - "8000:8000"
     env_file:
@@ -13,9 +14,37 @@ services:
     environment:
       - HF_TOKEN=${HF_TOKEN}
       - MODEL_ID=${MODEL_ID}
+      - LOAD_IN_8BIT=${LOAD_IN_8BIT}
+      - LOAD_IN_4BIT=${LOAD_IN_4BIT}
     volumes:
       # Mount a local host folder to store the Hugging Face model cache.
-      # This ensures the ~9GB model is only downloaded once and persists
-      # even if the container is stopped, deleted, or rebuilt.
       - ./hf_cache:/root/.cache/huggingface
     restart: unless-stopped
+
+  # CUDA GPU Server (High performance, accelerated for NVIDIA GPU hosts)
+  llm-server-cuda:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    container_name: gemma-llm-server-cuda
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+      - MODEL_ID=${MODEL_ID}
+      - LOAD_IN_8BIT=${LOAD_IN_8BIT}
+      - LOAD_IN_4BIT=${LOAD_IN_4BIT}
+    volumes:
+      # Mount a local host folder to store the Hugging Face model cache.
+      - ./hf_cache:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+

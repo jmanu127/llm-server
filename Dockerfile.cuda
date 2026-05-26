@@ -1,0 +1,35 @@
+# Pre-configured PyTorch CUDA runtime image
+FROM pytorch/pytorch:2.2.1-cuda12.1-cudnn8-runtime
+
+# Prevent Python from writing .pyc files and enable unbuffered logging
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    HF_HOME=/root/.cache/huggingface
+
+WORKDIR /app
+
+# Install system dependencies (git is needed for Hugging Face snapshot_download)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip
+RUN pip install --no-cache-dir --upgrade pip
+
+# Copy dependencies manifest
+COPY requirements.txt .
+
+# Install dependencies
+# (PyTorch is already pre-installed in the base image, so pip will skip it and install the rest)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy server implementation files
+COPY server.py .
+COPY download_model.py .
+
+# Expose FastAPI default port
+EXPOSE 8000
+
+# Start server
+CMD ["python", "server.py"]
