@@ -6,7 +6,7 @@ This server is designed to host **Google DeepMind's Gemma 4 E4B (4.5B Effective 
 
 ---
 
-## ✨ Features
+## Features
 
 - **Tri-Mode Execution**:
   - **Local Mode (with MPS)**: Run directly on Apple Silicon macOS leveraging the GPU via Metal Performance Shaders (MPS) for high-speed generation.
@@ -19,7 +19,7 @@ This server is designed to host **Google DeepMind's Gemma 4 E4B (4.5B Effective 
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
                        ┌────────────────────────┐
@@ -65,7 +65,7 @@ This server is designed to host **Google DeepMind's Gemma 4 E4B (4.5B Effective 
 
 ---
 
-## 🚀 Setup & Execution
+## Setup & Execution
 
 ### 1. Configure Hugging Face Access
 
@@ -150,7 +150,7 @@ To run the application inside a container utilizing your host's NVIDIA GPU for f
 
 ---
 
-## 🧪 Verification and Testing
+## Verification and Testing
 
 When the server starts successfully, it will expose the API on `http://localhost:8000`.
 
@@ -187,7 +187,7 @@ curl -N http://localhost:8000/generate \
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```
 ├── Dockerfile            # Optimized slim CPU-only container configuration
